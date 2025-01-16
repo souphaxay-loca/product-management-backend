@@ -1,56 +1,69 @@
 const productService = require("../services/productService");
 
 const productController = {
-  // get all products
+  // Get all products
   getAllProducts: async (req, res) => {
     try {
       const products = await productService.findAll();
-      console.log("controller >> ", products);
-      res.json(products);
+      res.json({
+        success: true,
+        message: "ສຳເລັດການດຶງຂໍ້ມູນສິນຄ້າ",
+        data: products,
+      });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // get a product by id
+  // Get a product by ID
   getProductById: async (req, res) => {
     try {
       const productID = req.params.product_id;
       const product = await productService.findById(productID);
 
       if (!product) {
-        return res.status(404).json({ message: "Product not found" });
+        return res
+          .status(404)
+          .json({ success: false, message: "ບໍ່ພົບສິນຄ້າ" });
       }
 
-      res.json(product);
+      res.json({
+        success: true,
+        message: "ສຳເລັດການດຶງຂໍ້ມູນສິນຄ້າ",
+        data: product,
+      });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
+  // Create a new product
   createProduct: async (req, res) => {
     try {
       const productData = req.body;
 
-      // Basic validation
       if (!productData.product_name || !productData.price) {
         return res.status(400).json({
-          message: "Product name and price are required",
+          success: false,
+          message: "ກະລຸນາໃສ່ຊື່ສິນຄ້າ ແລະ ລາຄາ",
         });
       }
 
       const product = await productService.create(productData);
-      res.status(201).json(product);
+      res.status(201).json({
+        success: true,
+        message: "ສຳເລັດການເພີ່ມຂໍ້ມູນສິນຄ້າ",
+        data: product,
+      });
     } catch (error) {
-      // More specific error handling
       if (error.name === "ValidationError") {
-        return res.status(400).json({ message: error.message });
+        return res.status(400).json({ success: false, message: error.message });
       }
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // update a product
+  // Update a product
   updateProduct: async (req, res) => {
     try {
       const productID = req.params.product_id;
@@ -59,28 +72,36 @@ const productController = {
       const product = await productService.update(productID, updateData);
 
       if (!product) {
-        return res.status(404).json({ message: "Product not found" });
+        return res
+          .status(404)
+          .json({ success: false, message: "ບໍ່ພົບສິນຄ້າ" });
       }
 
-      res.json(product);
+      res.json({
+        success: true,
+        message: "ສຳເລັດການແກ້ໄຂຂໍ້ມູນສິນຄ້າ",
+        data: product,
+      });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // delete a product
+  // Delete a product
   deleteProduct: async (req, res) => {
     try {
       const productID = req.params.product_id;
       const product = await productService.delete(productID);
 
       if (!product) {
-        return res.status(404).json({ message: "Product not found" });
+        return res
+          .status(404)
+          .json({ success: false, message: "ບໍ່ພົບສິນຄ້າ" });
       }
 
-      res.json({ message: "Product deleted" });
+      res.json({ success: true, message: "ສຳເລັດການລົບສິນຄ້າ" });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 };
