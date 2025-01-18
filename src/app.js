@@ -2,14 +2,19 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+// import database connection
 const connectDB = require("./config/db");
 require("./models/category");
 require("./models/unit");
 
+// import middleware
 const errorHandler = require("./middleware/errorHandler");
 const logger = require("./middleware/logger");
 
+// import routes
 const productRoute = require("./routes/productRoute");
+const categoryRoute = require("./routes/categoryRoute");
+const unitRoute = require("./routes/unitRoute");
 
 // initialize the express app
 const app = express();
@@ -24,6 +29,8 @@ app.use(logger);
 
 // API routes
 app.use("/api/products", productRoute);
+app.use("/api/categories", categoryRoute);
+app.use("/api/units", unitRoute);
 
 // welcome route
 app.get("/", (req, res) => {

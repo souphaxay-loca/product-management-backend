@@ -8,7 +8,6 @@ const {
   deleteProduct,
 } = require("../controllers/productController");
 
-// Remove '/products' from all routes since we already have /api/products in app.js
 // get all products
 router.get('/', getAllProducts);
 
