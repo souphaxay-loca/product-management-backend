@@ -55,10 +55,26 @@ const categoryController = {
         message: "ສຳເລັດການເພີ່ມຂໍ້ມູນໝວດໝູ່",
         data: category,
       });
-      
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }
+  },
+
+  // delete a category
+  deleteCategory: async (req, res) => {
+    const categoryID = req.params.category_id;
+    const category = await categoryService.delete(categoryID);
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "ບໍ່ພົບໝວດໝູ່",
+      });
+    }
+    return res.json({
+      success: true,
+      message: "ສຳເລັດການລົບໝວດໝູ່",
+    });
   },
 };
 

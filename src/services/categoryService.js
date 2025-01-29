@@ -13,7 +13,12 @@ const categoryService = {
     const category = new Category(categoryData);
     await category.save();
     return category;
-  }
+  },
+  delete: async (categoryID) => {
+    // Convert string to number
+    const id = parseInt(categoryID);
+    return await Category.findOneAndDelete({ category_id: id });
+  },
 };
 
 module.exports = categoryService;

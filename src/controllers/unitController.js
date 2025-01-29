@@ -55,7 +55,27 @@ const unitController = {
         message: "ສຳເລັດການເພີ່ມຂໍ້ມູນຫົວໜ່ວຍ",
         data: unit,
       });
-      
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
+  // delete a unit
+  deleteUnit: async (req, res) => {
+    try {
+      const unitId = req.params.unit_id;
+      const unit = await unitService.delete(unitId);
+
+      if (!unit) {
+        return res.status(404).json({
+          success: false,
+          message: "ບໍ່ພົບຫົວໜ່ວຍ",
+        });
+      }
+      return res.json({
+        success: true,
+        message: "ສຳເລັດການລົບຫົວໜ່ວຍ",
+      });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }
