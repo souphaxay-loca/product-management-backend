@@ -10,6 +10,7 @@ const unitSchema = new mongoose.Schema({
     type: String,
     required: true,
     maxlength: 50,
+    unique: true,
   },
 });
 

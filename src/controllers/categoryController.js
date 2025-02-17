@@ -1,81 +1,84 @@
-const categoryService = require("../services/categoryService");
+const categoryService = require('../services/categoryService');
 
-const categoryController = {
-  // get all categories
-  getAllCategories: async (req, res) => {
+class CategoryController {
+  async createCategory(req, res) {
     try {
-      const categories = await categoryService.findAll();
-      res.json({
-        success: true,
-        message: "ສຳເລັດການດຶງຂໍ້ມູນໝວດໝູ່",
-        data: categories,
-      });
-    } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
-    }
-  },
-
-  // get a category by id
-  getCategoryById: async (req, res) => {
-    const categoryID = req.params.category_id;
-    try {
-      const category = await categoryService.findById(categoryID);
-
-      if (!category) {
-        return res
-          .status(404)
-          .json({ success: false, message: "ບໍ່ພົບຂໍ້ມູນໝວດໝູ່ດັ່ງກ່າວ" });
-      }
-
-      res.json({
-        success: true,
-        message: "ສຳເລັດການດຶງຂໍ້ມູນໝວດໝູ່",
-        data: category,
-      });
-    } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
-    }
-  },
-
-  // create a new category
-  createCategory: async (req, res) => {
-    try {
-      const categoryData = req.body;
-
-      if (!categoryData.category_name) {
-        return res.status(400).json({
-          success: false,
-          message: "ກະລຸນາໃສ່ຊື່ໝວດໝູ່",
-        });
-      }
-
-      const category = await categoryService.create(categoryData);
+      const category = await categoryService.createCategory(req.body);
       res.status(201).json({
         success: true,
-        message: "ສຳເລັດການເພີ່ມຂໍ້ມູນໝວດໝູ່",
         data: category,
+        message: 'Category created successfully'
       });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
-    }
-  },
-
-  // delete a category
-  deleteCategory: async (req, res) => {
-    const categoryID = req.params.category_id;
-    const category = await categoryService.delete(categoryID);
-
-    if (!category) {
-      return res.status(404).json({
+      res.status(400).json({
         success: false,
-        message: "ບໍ່ພົບໝວດໝູ່",
+        message: error.message || 'Failed to create category'
       });
     }
-    return res.json({
-      success: true,
-      message: "ສຳເລັດການລົບໝວດໝູ່",
-    });
-  },
-};
+  }
 
-module.exports = categoryController;
+  async getAllCategories(req, res) {
+    try {
+      const categories = await categoryService.getAllCategories();
+      res.status(200).json({
+        success: true,
+        data: categories,
+        message: 'Categories retrieved successfully'
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to retrieve categories'
+      });
+    }
+  }
+
+  async getCategoryById(req, res) {
+    try {
+      const category = await categoryService.getCategoryById(req.params.id);
+      res.status(200).json({
+        success: true,
+        data: category,
+        message: 'Category retrieved successfully'
+      });
+    } catch (error) {
+      res.status(404).json({
+        success: false,
+        message: error.message || 'Category not found'
+      });
+    }
+  }
+
+  async updateCategory(req, res) {
+    try {
+      const category = await categoryService.updateCategory(req.params.id, req.body);
+      res.status(200).json({
+        success: true,
+        data: category,
+        message: 'Category updated successfully'
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error.message || 'Failed to update category'
+      });
+    }
+  }
+
+  async deleteCategory(req, res) {
+    try {
+      await categoryService.deleteCategory(req.params.id);
+      res.status(200).json({
+        success: true,
+        message: 'Category deleted successfully'
+      });
+    } catch (error) {
+      res.status(404).json({
+        success: false,
+        message: error.message || 'Failed to delete category'
+      });
+    }
+  }
+}
+
+module.exports = new CategoryController();

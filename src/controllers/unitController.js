@@ -1,85 +1,84 @@
-const unitService = require("../services/unitService");
+const unitService = require('../services/unitService');
 
-const unitController = {
-  // get all units
-  getAllUnits: async (req, res) => {
+class UnitController {
+  async createUnit(req, res) {
     try {
-      const units = await unitService.findAll();
-      res.json({
-        success: true,
-        message: "ສຳເລັດການດຶງຂໍ້ມູນຫົວໜ່ວຍ",
-        data: units,
-      });
-    } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
-    }
-  },
-
-  // get a unit by id
-  getUnitById: async (req, res) => {
-    const unitID = req.params.unit_id;
-    try {
-      const unit = await unitService.findById(unitID);
-
-      if (!unit) {
-        return res
-          .status(404)
-          .json({ success: false, message: "ບໍ່ພົບຂໍ້ມູນຫົວໜ່ວຍດັ່ງກ່າວ" });
-      }
-
-      res.json({
-        success: true,
-        message: "ສຳເລັດການດຶງຂໍ້ມູນຫົວໜ່ວຍ",
-        data: unit,
-      });
-    } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
-    }
-  },
-
-  // create a new unit
-  createUnit: async (req, res) => {
-    try {
-      const unitData = req.body;
-
-      if (!unitData.unit_name) {
-        return res.status(400).json({
-          success: false,
-          message: "ກະລຸນາໃສ່ຊື່ຫົວໜ່ວຍ",
-        });
-      }
-
-      const unit = await unitService.create(unitData);
+      const unit = await unitService.createUnit(req.body);
       res.status(201).json({
         success: true,
-        message: "ສຳເລັດການເພີ່ມຂໍ້ມູນຫົວໜ່ວຍ",
         data: unit,
+        message: 'Unit created successfully'
       });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      res.status(400).json({
+        success: false,
+        message: error.message || 'Failed to create unit'
+      });
     }
-  },
+  }
 
-  // delete a unit
-  deleteUnit: async (req, res) => {
+  async getAllUnits(req, res) {
     try {
-      const unitId = req.params.unit_id;
-      const unit = await unitService.delete(unitId);
-
-      if (!unit) {
-        return res.status(404).json({
-          success: false,
-          message: "ບໍ່ພົບຫົວໜ່ວຍ",
-        });
-      }
-      return res.json({
+      const units = await unitService.getAllUnits();
+      res.status(200).json({
         success: true,
-        message: "ສຳເລັດການລົບຫົວໜ່ວຍ",
+        data: units,
+        message: 'Units retrieved successfully'
       });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to retrieve units'
+      });
     }
-  },
-};
+  }
 
-module.exports = unitController;
+  async getUnitById(req, res) {
+    try {
+      const unit = await unitService.getUnitById(req.params.id);
+      res.status(200).json({
+        success: true,
+        data: unit,
+        message: 'Unit retrieved successfully'
+      });
+    } catch (error) {
+      res.status(404).json({
+        success: false,
+        message: error.message || 'Unit not found'
+      });
+    }
+  }
+
+  async updateUnit(req, res) {
+    try {
+      const unit = await unitService.updateUnit(req.params.id, req.body);
+      res.status(200).json({
+        success: true,
+        data: unit,
+        message: 'Unit updated successfully'
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error.message || 'Failed to update unit'
+      });
+    }
+  }
+
+  async deleteUnit(req, res) {
+    try {
+      await unitService.deleteUnit(req.params.id);
+      res.status(200).json({
+        success: true,
+        message: 'Unit deleted successfully'
+      });
+    } catch (error) {
+      res.status(404).json({
+        success: false,
+        message: error.message || 'Failed to delete unit'
+      });
+    }
+  }
+}
+
+module.exports = new UnitController();
